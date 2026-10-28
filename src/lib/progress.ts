@@ -16,8 +16,25 @@ export interface ProgressState {
 }
 
 const STORAGE_KEY = 'saeed-arabic-progress-v1';
+const NAME_KEY = 'saeed-arabic-mascot-name';
 
 const empty: ProgressState = { results: {}, badges: [] };
+
+export function getMascotNameLocal(): string {
+  try {
+    return localStorage.getItem(NAME_KEY) ?? '';
+  } catch {
+    return '';
+  }
+}
+
+export function setMascotNameLocal(name: string): void {
+  try {
+    localStorage.setItem(NAME_KEY, name);
+  } catch {
+    /* ignore */
+  }
+}
 
 export function loadProgress(): ProgressState {
   try {
