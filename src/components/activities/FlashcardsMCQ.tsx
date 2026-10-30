@@ -41,7 +41,7 @@ export function Flashcards({ activity }: { activity: FlashcardsActivity }) {
           <div className="mt-2 text-2xl font-bold text-slate-700">{card.word}</div>
           <div className="mt-1 text-sm font-bold text-slate-500">{card.soundLabel}</div>
           <button
-            onClick={() => speak(`${card.letter}. ${card.word}`)}
+            onClick={() => speak(`${card.letter}. ${card.word}`, { voice: 'narrator' })}
             className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 font-bold text-candy-blue shadow-candy-sm"
           >
             <Volume2 size={18} className={speaking ? 'animate-pulse' : ''} /> استمع
@@ -91,14 +91,12 @@ export function MCQ({ questions, onComplete }: {
   const [correctCount, setCorrectCount] = useState(0);
   const [answered, setAnswered] = useState(false);
   const q = questions[i];
-  const { speak } = useSpeech();
 
   const choose = (idx: number) => {
     if (answered) return;
     setSelected(idx);
     setAnswered(true);
     if (idx === q.answerIndex) setCorrectCount((c) => c + 1);
-    speak(q.options[idx]);
   };
 
   const next = () => {
@@ -165,8 +163,20 @@ export function ListeningQuiz({ activity, onComplete }: {
   activity: import('@/data/curriculum').ListeningQuizActivity;
   onComplete: (correct: number, total: number) => void;
 }) {
-  const { speak, speaking, stop } = useSpeech();
+  const { speak, speakSegments, speaking, stop } = useSpeech();
   const [phase, setPhase] = useState<'story' | 'quiz'>('story');
+
+  const playStory = () => {
+    if (speaking) {
+      stop();
+      return;
+    }
+    if (activity.storySegments && activity.storySegments.length) {
+      speakSegments(activity.storySegments);
+    } else {
+      speak(activity.storyText, { rate: 0.8, voice: 'narrator' });
+    }
+  };
 
   return (
     <div className="flex flex-col items-center gap-4" dir="rtl">
@@ -179,7 +189,7 @@ export function ListeningQuiz({ activity, onComplete }: {
             <p className="text-lg leading-loose font-bold text-slate-700 text-center">{activity.storyText}</p>
             <div className="mt-4 flex justify-center">
               <button
-                onClick={() => speaking ? stop() : speak(activity.storyText, { rate: 0.8 })}
+                onClick={playStory}
                 className="inline-flex items-center gap-2 rounded-full bg-candy-blue px-5 py-3 font-bold text-white shadow-candy"
               >
                 <Volume2 size={20} className={speaking ? 'animate-pulse' : ''} />

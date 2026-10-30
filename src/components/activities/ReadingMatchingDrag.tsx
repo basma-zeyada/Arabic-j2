@@ -26,7 +26,7 @@ export function ReadingTap({ activity, onComplete }: {
   const onWord = (w: string) => {
     const clean = w.replace(/[ًٌٍَُِّْ]/g, '').replace(/[^\u0600-\u06FF]/g, '');
     setActiveWord(w);
-    if (clean) speak(w);
+    if (clean) speak(clean, { voice: 'narrator' });
   };
 
   const tryMatch = (arabic: string, pic: string) => {
@@ -74,7 +74,7 @@ export function ReadingTap({ activity, onComplete }: {
         </p>
         <div className="mt-2 flex justify-center">
           <button
-            onClick={() => speak(activity.passage, { rate: 0.8 })}
+            onClick={() => speak(activity.passage, { rate: 0.8, voice: 'narrator' })}
             className="inline-flex items-center gap-2 rounded-full bg-candy-mint px-4 py-2 font-bold text-white shadow-candy-sm"
           >
             <Volume2 size={18} /> استمع للقراءة

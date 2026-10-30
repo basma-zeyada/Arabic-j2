@@ -59,6 +59,7 @@ export interface ListeningQuizActivity extends BaseActivity {
   type: 'listening-quiz';
   storyTitle: string;
   storyText: string;
+  storySegments?: { text: string; voice: 'narrator' | 'girl' | 'boy' | 'woman' | 'man' }[];
   questions: QuizQuestion[];
 }
 
