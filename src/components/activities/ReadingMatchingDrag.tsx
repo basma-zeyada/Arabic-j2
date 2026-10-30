@@ -25,8 +25,8 @@ export function ReadingTap({ activity, onComplete }: {
 
   const onWord = (w: string) => {
     const clean = w.replace(/[ًٌٍَُِّْ]/g, '').replace(/[^\u0600-\u06FF]/g, '');
-    setActiveWord(w);
-    if (clean) speak(clean, { voice: 'narrator' });
+    setActiveWord(clean);
+    if (clean) speak(w.trim(), { voice: 'narrator' });
   };
 
   const tryMatch = (arabic: string, pic: string) => {
@@ -62,7 +62,7 @@ export function ReadingTap({ activity, onComplete }: {
               <motion.span
                 key={i}
                 whileHover={isVocab ? { scale: 1.1 } : {}}
-                onClick={() => isVocab && onWord(clean)}
+                onClick={() => isVocab && onWord(w)}
                 className={`cursor-pointer rounded px-0.5 ${isVocab ? 'bg-candy-sun hover:bg-candy-yellow' : ''} ${
                   activeWord === clean ? 'ring-2 ring-candy-pink' : ''
                 }`}
