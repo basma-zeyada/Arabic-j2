@@ -5,6 +5,7 @@ import { Mascot } from '../Mascot';
 import { PrimaryButton, Card } from '../ui';
 import { useSpeech } from '@/lib/useSpeech';
 import type { WritingActivity, NasheedActivity, ChallengeMixActivity } from '@/data/curriculum';
+import { playCorrect, playTap, playWrong } from '@/lib/sounds';
 
 // ---------- Writing ----------
 
@@ -78,7 +79,10 @@ export function Writing({ activity, onComplete }: {
           {activity.rubric.map((item, i) => (
             <button
               key={i}
-              onClick={() => setChecked((c) => c.map((v, j) => (j === i ? !v : v)))}
+              onClick={() => {
+                playTap();
+                setChecked((c) => c.map((v, j) => (j === i ? !v : v)));
+              }}
               className={`w-full flex items-center justify-between rounded-xl px-3 py-2 border-2 text-right font-bold ${
                 checked[i] ? 'bg-emerald-100 border-emerald-400 text-emerald-700' : 'bg-white border-slate-200 text-slate-600'
               }`}
@@ -243,7 +247,12 @@ function MCQInline({ questions, onComplete }: {
     if (answered) return;
     setSelected(idx);
     setAnswered(true);
-    if (idx === q.answerIndex) setCorrect((c) => c + 1);
+    if (idx === q.answerIndex) {
+      setCorrect((c) => c + 1);
+      playCorrect();
+    } else {
+      playWrong();
+    }
   };
 
   const next = () => {
@@ -269,7 +278,14 @@ function MCQInline({ questions, onComplete }: {
           if (answered && isCorrect) style = 'bg-emerald-100 border-emerald-400 text-emerald-700';
           else if (answered && idx === selected && !isCorrect) style = 'bg-rose-100 border-rose-400 text-rose-700';
           return (
-            <button key={idx} onClick={() => choose(idx)} className={`rounded-2xl border-2 px-4 py-3 font-bold ${style}`}>
+            <button
+              key={idx}
+              onClick={() => {
+                playTap();
+                choose(idx);
+              }}
+              className={`rounded-2xl border-2 px-4 py-3 font-bold ${style}`}
+            >
               {opt}
             </button>
           );
@@ -295,7 +311,10 @@ function SimpleMatch({ pairs, onComplete }: {
         {pairs.map((p, i) => (
           <button
             key={i}
-            onClick={() => setMatched((m) => new Set(m).add(i))}
+            onClick={() => {
+              playCorrect();
+              setMatched((m) => new Set(m).add(i));
+            }}
             disabled={matched.has(i)}
             className={`rounded-2xl p-4 border-2 text-center ${matched.has(i) ? 'bg-emerald-100 border-emerald-400' : 'bg-white border-candy-pink'}`}
           >

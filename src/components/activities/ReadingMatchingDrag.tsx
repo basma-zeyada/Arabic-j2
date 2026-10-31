@@ -4,6 +4,7 @@ import { Volume2, Check, X } from 'lucide-react';
 import { Mascot } from '../Mascot';
 import { PrimaryButton, ProgressBar, Card } from '../ui';
 import { useSpeech } from '@/lib/useSpeech';
+import { playCorrect, playTap, playWrong } from '@/lib/sounds';
 import type { ReadingTapActivity, MatchingActivity, DragSortActivity } from '@/data/curriculum';
 
 // ---------- Reading tap ----------
@@ -26,7 +27,10 @@ export function ReadingTap({ activity, onComplete }: {
   const onWord = (w: string) => {
     const clean = w.replace(/[ًٌٍَُِّْ]/g, '').replace(/[^\u0600-\u06FF]/g, '');
     setActiveWord(clean);
-    if (clean) speak(w.trim(), { voice: 'narrator' });
+    if (clean) {
+      playTap();
+      speak(w.trim(), { voice: 'narrator' });
+    }
   };
 
   const tryMatch = (arabic: string, pic: string) => {
@@ -117,7 +121,10 @@ export function ReadingTap({ activity, onComplete }: {
             <motion.button
               key={i}
               whileTap={{ scale: 0.94 }}
-              onClick={() => setMatched((m) => new Set(m).add(pairIds[i]))}
+              onClick={() => {
+                playCorrect();
+                setMatched((m) => new Set(m).add(pairIds[i]));
+              }}
               disabled={matched.has(pairIds[i])}
               className={`rounded-full px-4 py-2 font-bold border-2 ${
                 matched.has(pairIds[i])
@@ -158,10 +165,12 @@ export function Matching({ activity, onComplete }: {
   const tryMatch = () => {
     if (pickedLeft === null || pickedRight === null) return;
     if (pickedLeft === pickedRight) {
+      playCorrect();
       setMatched((m) => new Set(m).add(pickedLeft));
       setPickedLeft(null);
       setPickedRight(null);
     } else {
+      playWrong();
       setWrong(true);
       setTimeout(() => {
         setWrong(false);
@@ -188,7 +197,11 @@ export function Matching({ activity, onComplete }: {
             <motion.button
               key={`l${i}`}
               whileTap={{ scale: 0.95 }}
-              onClick={() => !matched.has(i) && setPickedLeft(i)}
+              onClick={() => {
+                if (matched.has(i)) return;
+                playTap();
+                setPickedLeft(i);
+              }}
               className={`rounded-2xl p-3 font-bold border-2 ${
                 matched.has(i) ? 'bg-emerald-100 border-emerald-400 text-emerald-600 opacity-50' :
                 pickedLeft === i ? 'bg-candy-yellow border-amber-400 text-amber-700' :
@@ -204,7 +217,11 @@ export function Matching({ activity, onComplete }: {
             <motion.button
               key={`r${i}`}
               whileTap={{ scale: 0.95 }}
-              onClick={() => !matched.has(i) && setPickedRight(i)}
+              onClick={() => {
+                if (matched.has(i)) return;
+                playTap();
+                setPickedRight(i);
+              }}
               className={`rounded-2xl p-3 font-bold border-2 text-2xl ${
                 matched.has(i) ? 'bg-emerald-100 border-emerald-400 opacity-50' :
                 pickedRight === i ? 'bg-candy-yellow border-amber-400' :
@@ -241,6 +258,9 @@ export function DragSort({ activity, onComplete }: {
 
   const place = (bucketId: string) => {
     if (!selectedItem) return;
+    const item = activity.items.find((it) => it.id === selectedItem);
+    if (item?.correctBucket === bucketId) playCorrect();
+    else playWrong();
     setPlaced((p) => ({ ...p, [selectedItem]: bucketId }));
     setSelectedItem(null);
   };
@@ -257,7 +277,10 @@ export function DragSort({ activity, onComplete }: {
             key={it.id}
             whileTap={{ scale: 0.94 }}
             whileHover={{ scale: 1.05 }}
-            onClick={() => setSelectedItem(it.id)}
+            onClick={() => {
+              playTap();
+              setSelectedItem(it.id);
+            }}
             className={`rounded-full px-4 py-2 font-bold border-2 ${
               selectedItem === it.id ? 'bg-candy-yellow border-amber-500 text-amber-700 scale-110' : 'bg-white border-candy-pink text-candy-pink'
             }`}

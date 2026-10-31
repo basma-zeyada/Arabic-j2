@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ListOrdered, Sparkles } from 'lucide-react';
 import type { PictureGameActivity } from '@/data/curriculum';
 import { Card } from '@/components/ui';
+import { playCelebrate, playCorrect, playTap, playWrong } from '@/lib/sounds';
 
 function shuffle<T>(items: T[]): T[] {
   const copy = [...items];
@@ -73,15 +74,18 @@ function OrderRound({ frames, onDone }: { frames: string[]; onDone: (mistakes: n
 
   useEffect(() => {
     if (!finished) return;
+    playCelebrate();
     const t = setTimeout(() => onDone(mistakes), 900);
     return () => clearTimeout(t);
   }, [finished, mistakes, onDone]);
 
   const tap = (index: number) => {
     if (index === placed.length) {
+      playCorrect();
       setPlaced((p) => [...p, index]);
       return;
     }
+    playWrong();
     setMistakes((m) => m + 1);
     setWrongIndex(index);
     setTimeout(() => setWrongIndex(null), 500);
@@ -145,6 +149,7 @@ function MatchRound({ symbols, onDone }: { symbols: string[]; onDone: (mistakes:
 
   useEffect(() => {
     if (!finished) return;
+    playCelebrate();
     const t = setTimeout(() => onDone(mistakes), 900);
     return () => clearTimeout(t);
   }, [finished, mistakes, onDone]);
@@ -152,16 +157,19 @@ function MatchRound({ symbols, onDone }: { symbols: string[]; onDone: (mistakes:
   const flip = (id: number) => {
     if (busy || flipped.includes(id) || matched.includes(deck[id].emoji)) return;
     const next = [...flipped, id];
+    playTap();
     setFlipped(next);
     if (next.length < 2) return;
 
     setBusy(true);
     const [a, b] = next.map((i) => deck[i]);
     if (a.emoji === b.emoji) {
+      playCorrect();
       setMatched((m) => [...m, a.emoji]);
       setFlipped([]);
       setBusy(false);
     } else {
+      playWrong();
       setMistakes((m) => m + 1);
       setTimeout(() => {
         setFlipped([]);

@@ -4,6 +4,7 @@ import { Volume2, ChevronRight, ChevronLeft, Check } from 'lucide-react';
 import { Mascot } from '../Mascot';
 import { PrimaryButton, ProgressBar } from '../ui';
 import { useSpeech } from '@/lib/useSpeech';
+import { playCelebrate, playCorrect, playTap, playWrong } from '@/lib/sounds';
 import type { FlashcardsActivity } from '@/data/curriculum';
 
 export function Flashcards({ activity }: { activity: FlashcardsActivity }) {
@@ -14,6 +15,7 @@ export function Flashcards({ activity }: { activity: FlashcardsActivity }) {
   const total = activity.cards.length;
 
   const go = (d: number) => {
+    playTap();
     const n = (idx + d + total) % total;
     setIdx(n);
     setSeen((s) => new Set(s).add(n));
@@ -96,11 +98,18 @@ export function MCQ({ questions, onComplete }: {
     if (answered) return;
     setSelected(idx);
     setAnswered(true);
-    if (idx === q.answerIndex) setCorrectCount((c) => c + 1);
+    if (idx === q.answerIndex) {
+      setCorrectCount((c) => c + 1);
+      playCorrect();
+    } else {
+      playWrong();
+    }
   };
 
   const next = () => {
+    playTap();
     if (i + 1 >= questions.length) {
+      playCelebrate();
       onComplete(correctCount, questions.length);
       return;
     }
