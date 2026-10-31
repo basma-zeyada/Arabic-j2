@@ -7,6 +7,7 @@ import { Stars, PrimaryButton, Card, ProgressBar } from './ui';
 import { Flashcards, MCQ, ListeningQuiz } from './activities/FlashcardsMCQ';
 import { ReadingTap, Matching, DragSort } from './activities/ReadingMatchingDrag';
 import { Writing, Nasheed, ChallengeMix } from './activities/WritingNasheedChallenge';
+import { PictureGame } from './activities/PictureGame';
 import { starsFromScore, type ProgressState } from '@/lib/progress';
 import { useConfetti } from '@/lib/confetti';
 
@@ -60,6 +61,8 @@ export function LessonScreen({
         return <Nasheed activity={a} onComplete={handleComplete} />;
       case 'challenge-mix':
         return <ChallengeMix activity={a} onComplete={handleComplete} />;
+      case 'picture-game':
+        return <PictureGame activity={a} onComplete={handleComplete} />;
       default:
         return null;
     }
@@ -198,6 +201,7 @@ function getMaxScore(section: Section): number {
     case 'writing': return a.rubric.length;
     case 'nasheed': return 1;
     case 'challenge-mix': return a.questions.length + (a.matchPairs?.length ?? 0);
+    case 'picture-game': return a.sequence.length + a.memoryPairs.length;
     default: return 5;
   }
 }

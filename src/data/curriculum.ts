@@ -20,7 +20,8 @@ export type ActivityType =
   | 'mcq'
   | 'writing'
   | 'nasheed'
-  | 'challenge-mix';
+  | 'challenge-mix'
+  | 'picture-game';
 
 export interface BaseActivity {
   id: string;
@@ -107,7 +108,14 @@ export interface ChallengeMixActivity extends BaseActivity {
   dragBuckets?: { id: string; label: string; emoji?: string }[];
 }
 
+export interface PictureGameActivity extends BaseActivity {
+  type: 'picture-game';
+  sequence: string[];
+  memoryPairs: string[];
+}
+
 export type Activity =
+  | PictureGameActivity
   | FlashcardsActivity
   | MCQActivity
   | ListeningQuizActivity
@@ -315,6 +323,22 @@ export const units: Unit[] = [
           ],
         },
       },
+      {
+        id: 'u1-s6',
+        type: 'challenge',
+        title: 'اللعبة الكبيرة',
+        subtitle: 'رتّب القصة وطابق الصور',
+        emoji: '🏆',
+        color: 'from-amber-400 to-candy-coral',
+        activity: {
+          id: 'u1-s6-a',
+          type: 'picture-game',
+          title: 'لعبة الوحدة الأولى',
+          instructions: 'رتّب صور القصة بالترتيب، ثم طابق الصور المتشابهة.',
+          sequence: ['🌅', '🥣', '🎒', '🔍', '🤝', '🙏'],
+          memoryPairs: ['🎒', '✏️', '🏫', '🤝'],
+        },
+      },
     ],
   },
   {
@@ -481,6 +505,22 @@ export const units: Unit[] = [
           ],
         },
       },
+      {
+        id: 'u2-s6',
+        type: 'challenge',
+        title: 'اللعبة الكبيرة',
+        subtitle: 'رتّب القصة وطابق الصور',
+        emoji: '🏆',
+        color: 'from-amber-400 to-candy-coral',
+        activity: {
+          id: 'u2-s6-a',
+          type: 'picture-game',
+          title: 'لعبة الوحدة الثانية',
+          instructions: 'رتّب صور القصة بالترتيب، ثم طابق الصور المتشابهة.',
+          sequence: ['⏰', '🐦', '🧹', '🧸', '📚', '✨'],
+          memoryPairs: ['🪥', '🥦', '🍎', '🏃‍♀️'],
+        },
+      },
     ],
   },
   {
@@ -644,6 +684,22 @@ export const units: Unit[] = [
             [0, 2],
             [1, 3],
           ],
+        },
+      },
+      {
+        id: 'u3-s6',
+        type: 'challenge',
+        title: 'اللعبة الكبيرة',
+        subtitle: 'رتّب القصة وطابق الصور',
+        emoji: '🏆',
+        color: 'from-amber-400 to-candy-coral',
+        activity: {
+          id: 'u3-s6-a',
+          type: 'picture-game',
+          title: 'لعبة الوحدة الثالثة',
+          instructions: 'رتّب صور القصة بالترتيب، ثم طابق الصور المتشابهة.',
+          sequence: ['🏀', '👨‍🏫', '💻', '🏃‍♀️', '👩', '🏆'],
+          memoryPairs: ['🏀', '⚽', '🥋', '💻'],
         },
       },
     ],

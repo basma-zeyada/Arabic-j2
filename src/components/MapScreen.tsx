@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Lock, Check, Play, Trophy, Star as StarIcon, Crown, Home } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { SECTION_META, units, type Section } from '@/data/curriculum';
 import { Mascot } from './Mascot';
 import { totalScore, totalStars, type ProgressState } from '@/lib/progress';
@@ -143,6 +143,20 @@ function MapNode({
   );
 }
 
+function isUnitUnlocked(progress: ProgressState, unitIndex: number): boolean {
+  if (unitIndex === 0) return true;
+  const previous = units[unitIndex - 1];
+  return !!progress.results[previous.sections[previous.sections.length - 1].id];
+}
+
+function latestUnlockedUnit(progress: ProgressState): number {
+  let latest = 0;
+  units.forEach((_, i) => {
+    if (isUnitUnlocked(progress, i)) latest = i;
+  });
+  return latest;
+}
+
 export function MapScreen({
   progress,
   mascotName,
@@ -154,7 +168,8 @@ export function MapScreen({
   onOpenSection: (unitId: string, sectionIndex: number) => void;
   onHome: () => void;
 }) {
-  const unit = units[0]; // Unit 1 fully playable
+  const [unitIndex, setUnitIndex] = useState(() => latestUnlockedUnit(progress));
+  const unit = units[unitIndex];
   const score = useMemo(() => totalScore(progress), [progress]);
   const stars = useMemo(() => totalStars(progress), [progress]);
 
@@ -178,6 +193,32 @@ export function MapScreen({
             🏅 {score}
           </div>
         </div>
+      </div>
+
+      {/* Unit selector */}
+      <div className="flex justify-center gap-2 overflow-x-auto px-4 pt-3">
+        {units.map((u, i) => {
+          const unlocked = isUnitUnlocked(progress, i);
+          const active = i === unitIndex;
+          return (
+            <button
+              key={u.id}
+              type="button"
+              disabled={!unlocked}
+              onClick={() => setUnitIndex(i)}
+              className={`flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold shadow-candy-sm transition ${
+                active
+                  ? 'bg-candy-pink text-white'
+                  : unlocked
+                  ? 'bg-white text-slate-700 hover:bg-candy-rose'
+                  : 'bg-slate-200 text-slate-400'
+              }`}
+            >
+              {unlocked ? <span>{u.emoji}</span> : <Lock size={14} />}
+              الوحدة {u.number}
+            </button>
+          );
+        })}
       </div>
 
       {/* Unit header */}

@@ -19,8 +19,9 @@ export function HomeScreen({
   const score = totalScore(progress);
   const stars = totalStars(progress);
   const earnedBadges = BADGES.filter((b) => progress.badges.includes(b.id));
-  const completedCount = units[0].sections.filter((s) => progress.results[s.id]).length;
-  const progressPct = Math.round((completedCount / units[0].sections.length) * 100);
+  const allSections = units.flatMap((u) => u.sections);
+  const completedCount = allSections.filter((s) => progress.results[s.id]).length;
+  const progressPct = Math.round((completedCount / allSections.length) * 100);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-candy-sky via-candy-rose to-candy-sun" dir="rtl">
@@ -95,7 +96,7 @@ export function HomeScreen({
         {/* Progress bar */}
         <div className="w-full mb-6">
           <div className="flex justify-between text-sm font-bold text-slate-600 mb-1">
-            <span>تقدّمك في الوحدة الأولى</span>
+            <span>تقدّمك في المغامرة</span>
             <span>{progressPct}%</span>
           </div>
           <div className="h-5 w-full rounded-full bg-white/70 overflow-hidden shadow-inner">
@@ -144,7 +145,7 @@ export function HomeScreen({
         </motion.div>
 
         <div className="mt-6 flex items-center gap-1 text-xs font-bold text-slate-400">
-          <BookOpen size={14} /> الوحدة الأولى جاهزة للعب الآن
+          <BookOpen size={14} /> الوحدات الثلاث جاهزة للعب الآن
         </div>
       </div>
     </div>

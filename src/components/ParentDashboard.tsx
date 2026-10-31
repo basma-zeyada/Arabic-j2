@@ -15,9 +15,9 @@ export function ParentDashboard({
 }) {
   const score = totalScore(progress);
   const stars = totalStars(progress);
-  const unit = units[0];
+  const allSections = units.flatMap((u) => u.sections);
 
-  const sectionResults = unit.sections.map((s) => {
+  const sectionResults = allSections.map((s) => {
     const r = progress.results[s.id];
     const maxScore = getMaxScore(s);
     return {
@@ -83,7 +83,7 @@ export function ParentDashboard({
             />
           </div>
           <div className="mt-2 text-sm font-bold text-slate-500">
-            أكمل {completedCount} من {unit.sections.length} دروس
+            أكمل {completedCount} من {allSections.length} دروس
           </div>
         </Card>
 
@@ -152,6 +152,7 @@ function getMaxScore(section: { activity: any }): number {
     case 'writing': return a.rubric.length;
     case 'nasheed': return 1;
     case 'challenge-mix': return a.questions.length + (a.matchPairs?.length ?? 0);
+    case 'picture-game': return a.sequence.length + a.memoryPairs.length;
     default: return 5;
   }
 }

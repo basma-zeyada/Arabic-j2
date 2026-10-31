@@ -82,7 +82,9 @@ export function starsFromScore(score: number, max: number): number {
 export const BADGES = [
   { id: 'first-star', label: 'أول نجمة', emoji: '⭐', desc: 'حصلت على أول نجمة!' },
   { id: 'triple-gold', label: 'ثلاث ذهبيات', emoji: '🥇', desc: '3 نجوم في درس واحد!' },
-  { id: 'unit-1-hero', label: 'بطل الوحدة', emoji: '🏆', desc: 'أكملت تحدي الوحدة الأولى!' },
+  { id: 'unit-1-hero', label: 'بطل الوحدة الأولى', emoji: '🏆', desc: 'أكملت لعبة الوحدة الأولى!' },
+  { id: 'unit-2-hero', label: 'بطل الوحدة الثانية', emoji: '🥇', desc: 'أكملت لعبة الوحدة الثانية!' },
+  { id: 'unit-3-hero', label: 'بطل الوحدة الثالثة', emoji: '🏅', desc: 'أكملت لعبة الوحدة الثالثة!' },
   { id: 'bookworm', label: 'دودة الكتب', emoji: '📚', desc: 'أكملت 3 دروس قراءة!' },
   { id: 'singer', label: 'المُغنّي', emoji: '🎤', desc: 'أنجزت نشيدًا كاملًا!' },
 ];
@@ -98,10 +100,10 @@ export function maybeAwardBadges(state: ProgressState): string[] {
   if (!has('triple-gold') && results.some((r) => r.stars === 3)) {
     newBadges.push('triple-gold');
   }
-  // unit-1-hero: challenge section completed
-  if (!has('unit-1-hero') && Object.entries(state.results).some(([k, r]) => k.includes('u1-s8') && r.stars >= 1)) {
-    newBadges.push('unit-1-hero');
-  }
+  const unitGameDone = (sectionId: string) => (state.results[sectionId]?.stars ?? 0) >= 1;
+  if (!has('unit-1-hero') && unitGameDone('u1-s6')) newBadges.push('unit-1-hero');
+  if (!has('unit-2-hero') && unitGameDone('u2-s6')) newBadges.push('unit-2-hero');
+  if (!has('unit-3-hero') && unitGameDone('u3-s6')) newBadges.push('unit-3-hero');
   return newBadges;
 }
 
